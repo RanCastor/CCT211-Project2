@@ -19,6 +19,7 @@ class App(tk.Tk):
         # set a single font to be used throughout the app
         self.title_font = tkfont.Font(
             family='Helvetica', size=18, weight="bold", slant="italic")
+        self.title("Demo1")
 
         # the container is where we'll stack a bunch of frames
         # on top of each other, then the one we want visible

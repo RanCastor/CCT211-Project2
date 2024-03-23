@@ -52,22 +52,22 @@ class Combo(tk.Frame):
 class RadiobuttonField(tk.Frame):
     def __init__(self, parent, label='', options=[], *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        self.choice = tk.StringVar()
+        self.dataentry = tk.StringVar()
 
         self.label = tk.Label(self, text=label, width=25)
         self.label.grid(row=0, column=0, padx=10, sticky=(tk.W + tk.E))
 
         self.option_buttons = []
         for index, option in enumerate(options):
-            button = tk.Radiobutton(self, text=option, variable=self.choice, value=option)
+            button = tk.Radiobutton(self, text=option, variable=self.dataentry, value=option)
             button.grid(row=0, column=index + 1, padx=5, sticky=(tk.W + tk.E))
             self.option_buttons.append(button)
 
     def reset(self):
-        self.choice.set("")
+        self.dataentry.set("")
 
     def get(self):
-        return self.choice.get()
+        return self.dataentry.get()
 
 
 class ScrolledTextWidget(tk.Frame):
@@ -83,11 +83,11 @@ class ScrolledTextWidget(tk.Frame):
         self.label = tk.Label(self, text=label, width=10)
         self.label.grid(row=0, column=0, padx=10, sticky=tk.W)
 
-        self.scrolled_text = scrolledtext.ScrolledText(self, width=45, height=5, font=self.custom_font)
-        self.scrolled_text.grid(row=0, column=1, padx=10, pady=5, sticky=tk.W)
+        self.dataentry = scrolledtext.ScrolledText(self, width=45, height=5, font=self.custom_font)
+        self.dataentry.grid(row=0, column=1, padx=10, pady=5, sticky=tk.W)
 
     def reset(self):
-        self.scrolled_text.delete("1.0", tk.END)
+        self.dataentry.delete("1.0", tk.END)
 
     def get(self):
-        return self.scrolled_text.get("1.0", tk.END).strip()
+        return self.dataentry.get("1.0", tk.END).strip()
