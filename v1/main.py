@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import font as tkfont
-from widgets import EntryField, Combo, RadiobuttonField, ScrolledTextWidget
+from widgets import EntryField, Combo, RadiobuttonField, ScrolledTextWidget, CalendarField
 import tkinter.ttk as ttk  # just for treeview
 # import entry_field  # no particular good reason I did it the other way here
 # from models import *  # done this way to access classes just by name
