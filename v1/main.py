@@ -7,7 +7,6 @@ import tkinter.ttk as ttk  # just for treeview
 # from models import *  # done this way to access classes just by name
 import sys  # only used for flushing debug print statements
 
-
 class App(tk.Tk):
 
     def __init__(self, *args, **kwargs):
@@ -72,48 +71,136 @@ class StarterBrowsePage(tk.Frame):
         #  edit_selected, on_select, delete_selected, update. Do not get frightened. We can use the demo's code
         #  to write these methods.
 
-        # Left Frame
-        left_frame_pad = 15
-        self.left_frame = tk.Frame(self, relief="ridge", borderwidth=5)
-        self.left_frame.grid(row=0, column=0, sticky="nsew")
-        self.right_frame = tk.Frame(self, relief="ridge", borderwidth=5)
-        self.right_frame.grid(row=0, column=1, sticky="nsew")
+        # Create 2 main frames (left and right)
+        self.frame1 = tk.Frame(self, borderwidth=5, relief="ridge", width=500)
+        self.frame1.grid(row=0, column=0, sticky=tk.NSEW)
 
-        self.name = EntryField(self.left_frame, label="Name")
-        self.name.grid(row=0, column=0, sticky="nsew", pady=left_frame_pad)
+        self.frame2 = tk.Frame(self, borderwidth=5, relief="ridge")
+        self.frame2.grid(row=0, column=1, sticky=tk.NSEW)
 
-        self.studentID = EntryField(self.left_frame, label="Studend ID")
-        self.studentID.grid(row=1, column=0, sticky="nsew", pady=left_frame_pad)
+        # Create frame1 widgets
+        self.name_field = EntryField(self.frame1, label='Name', error_message='', validate='key', validatecommand=self.validate_only_text)
+        self.name_field.grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
+        self.name_field.field.bind("<FocusOut>", self.validate_name)
 
-        self.year = Combo(self.left_frame, label='Birth Year', options=('2003', '2004', '2005'))
-        self.year.grid(row=3, column=0, sticky="nsew", pady=left_frame_pad)
+        self.id_field = EntryField(self.frame1, label='Student ID', error_message='', validate='key', validatecommand=self.validate_only_numbers)
+        self.id_field.grid(row=1, column=0, sticky=tk.W, padx=10, pady=5)
+        self.id_field.field.bind("<FocusOut>", self.validate_ten_digits)
 
-        self.radiobutton_field = RadiobuttonField(self.left_frame, label="Year:", options=["Year 1", "Year 2", "Year 3", "Year 4+"])
-        self.radiobutton_field.grid(row=4, column=0, sticky="nsew")
+        self.cal = CalendarField(self.frame1, label='Date')
+        self.cal.grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.button1 = Button(self.left_frame, text="Print Radio Button", width=20, command=lambda: {print(self.radiobutton_field.get())})
-        self.button1.grid(row=5, column=0, sticky="nsew", pady=left_frame_pad)
+        self.credits_completed = Combo(self.frame1, label='Credits Completed', options=('0', '0.5', '1', '1.5', '2', '2.5', '3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8'))
+        self.credits_completed.grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.mature = RadiobuttonField(self.left_frame, label="Mature Student:",
-                                                  options=["Yes", "No"])
-        self.mature.grid(row=6, column=0, sticky="nsew", pady=left_frame_pad)
+        self.year_of_study = RadiobuttonField(self.frame1, label='Year of Study', options=['1', '2', '3', '4', '4+'], initial_value='1')
+        self.year_of_study.grid(row=4, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.accessibility = RadiobuttonField(self.left_frame, label="Registered with accessibility:",
-                                       options=["Yes", "No"])
-        self.accessibility.grid(row=7, column=0, sticky="nsew", pady=left_frame_pad)
+        self.accessibility = RadiobuttonField(self.frame1, label='Registered with Accessibility?', options=['Yes', 'No'], initial_value='No')
+        self.accessibility.grid(row=5, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.text_area = ScrolledTextWidget(self.left_frame, label="Enter Text:")
-        self.text_area.grid(row=8, column=0)
+        self.topic = Combo(self.frame1, label='Category of Topic', options=('Registration', 'Finances', 'Transfer Credit', 'Personal Information', 'Petitions', 'Graduation', 'Exam Identification', 'Absence Declaration'))
+        self.topic.grid(row=6, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.button1 = Button(self.left_frame, text="Print Scrolled Text", width=20,
-                              command=lambda: {print(self.text_area.get())})
-        self.button1.grid(row=9, column=0, sticky="nsew", pady=left_frame_pad)
+        self.question = EntryField(self.frame1, label='Summary of Question', error_message='', validate='key', validatecommand=self.validate_question)
+        self.question.grid(row=7, column=0, sticky=tk.W, padx=10, pady=5)
+        self.question.field.bind("<FocusOut>", self.validate_fifty_chars)
 
-        # Right Frame
-        self.someother_label = tk.Label(self.right_frame, text="something")
-        self.someother_label.grid(row=0, column=0, sticky="nsew")
+        self.submit_button = tk.Button(self.frame1, text='Submit', width=4, height=2)
+        self.submit_button.grid(row=8, column=0, padx=10, pady=30)
 
+        # Create frame2 widgets
+        self.see_directory_button = tk.Button(self.frame2, text='See Directory', command=self.go_to_directory)
+        self.see_directory_button.grid(row=0, column=0, padx=10, pady=10)
+
+        self.see_submission_button = tk.Button(self.frame2, text='See Submission', command=self.go_to_profile)
+        self.see_submission_button.grid(row=0, column=1, padx=10, pady=10)
+
+        self.directory_frame = tk.Frame(self.frame2, bg='yellow', width=850, height=600)
+        self.directory_frame.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW, padx=10, pady=10)
+
+        self.profile_frame = tk.Frame(self.frame2, bg='green', width=850, height=600)
+        self.profile_frame.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW, padx=10, pady=10)
+
+        self.edit_button = tk.Button(self.frame2, text='Edit', command=self.make_new_window)
+        self.edit_button.grid(row=2, column=0, columnspan=2, pady=20)
+        
         self.grid_rowconfigure(0, weight=1)  # This makes lower edge of frames touch the bottom of the screen
+         
+    
+    def validate_only_text(self, text):
+        # Check if input text is valid
+        name_valid = all(char.isalpha() or char.isspace() for char in text) # I used ChatGPT to learn about the all() function
+        
+        if name_valid:
+            # Clear error message
+            self.name_field.error.configure(text='')
+        else:
+            # Display error message
+            self.name_field.error.configure(text='Please only enter letters or spaces')
+        
+        return name_valid
+
+    # This verifies if the name is correct when the user clicks away from the entry and clears error messages accordingly
+    def validate_name(self, event):
+        if all(char.isalpha() or char.isspace() for char in event.widget.get()): # I used ChatGPT to learn about the event.widget.get() method
+            self.name_field.error.configure(text='')
+        else:
+            self.name_field.error.configure(text='Please only enter letters or spaces')
+
+
+    def validate_only_numbers(self, text):
+        # Check if input text is valid
+        id_valid = len(text)<=10 and all(char.isdigit() for char in text)
+
+        if id_valid:
+            # Clear error message
+            self.id_field.error.configure(text='')
+        else:
+            # Display error message
+            self.id_field.error.configure(text='Please enter the ten digits only composed of numbers')
+        
+        return id_valid
+
+
+    def validate_ten_digits(self, event):
+        if len(event.widget.get()) != 10:
+            self.id_field.error.configure(text='The Student ID must be 10 digits long')
+        elif len(event.widget.get()) == 10:
+            self.id_field.error.configure(text='')
+
+
+    def validate_question(self, text):
+        # Check if input text is valid
+        question_valid = len(text) <= 50 and all(char.isalpha() or char.isspace() or char.isdigit() or char==',' or char=='.' for char in text)
+        
+        if question_valid:
+            # Clear error message
+            self.question.error.configure(text='')
+        else:
+            # Display error message
+            self.question.error.configure(text='Please do not enter special characters and limit the summary to 50 characters')
+        
+        return question_valid
+
+    def validate_fifty_chars(self, event):
+        if len(event.widget.get()) > 50:
+            self.question.error.configure(text='Please limit the summary to 50 characters')
+        elif len(event.widget.get()) <= 50:
+            self.question.error.configure(text='')
+
+
+    def make_new_window(parent):
+        new_window = tk.Toplevel(parent)
+        new_window.geometry("600x600")
+
+
+    def go_to_directory(self):
+        self.directory_frame.lift()
+
+
+    def go_to_profile(self):
+        self.profile_frame.lift()
 
 
 class TestPage(tk.Frame):
