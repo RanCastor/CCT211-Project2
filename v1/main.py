@@ -1,11 +1,13 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import font as tkfont
+from tkinter import messagebox
 from widgets import EntryField, Combo, RadiobuttonField, ScrolledTextWidget, CalendarField
 import tkinter.ttk as ttk  # just for treeview
 # import entry_field  # no particular good reason I did it the other way here
 # from models import *  # done this way to access classes just by name
 import sys  # only used for flushing debug print statements
+
 
 class App(tk.Tk):
 
@@ -18,7 +20,7 @@ class App(tk.Tk):
         # set a single font to be used throughout the app
         self.title_font = tkfont.Font(
             family='Helvetica', size=18, weight="bold", slant="italic")
-        self.title("Demo1")
+        self.title("Student Advising Notes Repository")
 
         # the container is where we'll stack a bunch of frames
         # on top of each other, then the one we want visible
@@ -72,11 +74,15 @@ class StarterBrowsePage(tk.Frame):
         #  to write these methods.
 
         # Create 2 main frames (left and right)
-        self.frame1 = tk.Frame(self, borderwidth=5, relief="ridge", width=500)
-        self.frame1.grid(row=0, column=0, sticky=tk.NSEW)
 
         self.frame2 = tk.Frame(self, borderwidth=5, relief="ridge")
         self.frame2.grid(row=0, column=1, sticky=tk.NSEW)
+
+        self.frame3 = tk.Frame(self, borderwidth=5, relief="ridge", width=500)
+        self.frame3.grid(row=0, column=0, sticky=tk.NSEW)
+
+        self.frame1 = tk.Frame(self, borderwidth=5, relief="ridge", width=500)
+        self.frame1.grid(row=0, column=0, sticky=tk.NSEW)
 
         # Create frame1 widgets
         self.name_field = EntryField(self.frame1, label='Name', error_message='', validate='key', validatecommand=self.validate_only_text)
@@ -90,8 +96,8 @@ class StarterBrowsePage(tk.Frame):
         self.cal = CalendarField(self.frame1, label='Date')
         self.cal.grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.credits_completed = Combo(self.frame1, label='Credits Completed', options=('0', '0.5', '1', '1.5', '2', '2.5', '3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8'))
-        self.credits_completed.grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
+        self.program = Combo(self.frame1, label='Program', options=('Anthropology', 'Art', 'Biology', 'Communication', 'Business'))
+        self.program.grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
 
         self.year_of_study = RadiobuttonField(self.frame1, label='Year of Study', options=['1', '2', '3', '4', '4+'], initial_value='1')
         self.year_of_study.grid(row=4, column=0, sticky=tk.W, padx=10, pady=5)
@@ -102,42 +108,80 @@ class StarterBrowsePage(tk.Frame):
         self.topic = Combo(self.frame1, label='Category of Topic', options=('Registration', 'Finances', 'Transfer Credit', 'Personal Information', 'Petitions', 'Graduation', 'Exam Identification', 'Absence Declaration'))
         self.topic.grid(row=6, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.question = EntryField(self.frame1, label='Summary of Question', error_message='', validate='key', validatecommand=self.validate_question)
+        self.question = ScrolledTextWidget(self.frame1, label='Summary of Question', error_message='')
         self.question.grid(row=7, column=0, sticky=tk.W, padx=10, pady=5)
-        self.question.field.bind("<FocusOut>", self.validate_fifty_chars)
 
         self.submit_button = tk.Button(self.frame1, text='Submit', width=4, height=2)
         self.submit_button.grid(row=8, column=0, padx=10, pady=30)
 
-        # Create frame2 widgets
-        self.see_directory_button = tk.Button(self.frame2, text='See Directory', command=self.go_to_directory)
-        self.see_directory_button.grid(row=0, column=0, padx=10, pady=10)
+        # Create frame3 widgets
+        self.edit_name_field = EntryField(self.frame3, label='Name', error_message='', validate='key', validatecommand=self.validate_only_text)
+        self.edit_name_field.grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
+        self.edit_name_field.field.bind("<FocusOut>", self.validate_name)
 
-        self.see_submission_button = tk.Button(self.frame2, text='See Submission', command=self.go_to_profile)
-        self.see_submission_button.grid(row=0, column=1, padx=10, pady=10)
+        self.edit_id_field = EntryField(self.frame3, label='Student ID', error_message='', validate='key', validatecommand=self.validate_only_numbers)
+        self.edit_id_field.grid(row=1, column=0, sticky=tk.W, padx=10, pady=5)
+        self.edit_id_field.field.bind("<FocusOut>", self.validate_ten_digits)
+
+        self.edit_cal = CalendarField(self.frame3, label='Date')
+        self.edit_cal.grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
+
+        self.edit_program = Combo(self.frame3, label='Program', options=('Anthropology', 'Art', 'Biology', 'Communication', 'Business'))
+        self.edit_program.grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
+
+        self.edit_year_of_study = RadiobuttonField(self.frame3, label='Year of Study', options=['1', '2', '3', '4', '4+'], initial_value='1')
+        self.edit_year_of_study.grid(row=4, column=0, sticky=tk.W, padx=10, pady=5)
+
+        self.edit_accessibility = RadiobuttonField(self.frame3, label='Registered with Accessibility?', options=['Yes', 'No'], initial_value='No')
+        self.edit_accessibility.grid(row=5, column=0, sticky=tk.W, padx=10, pady=5)
+
+        self.edit_topic = Combo(self.frame3, label='Category of Topic', options=('Registration', 'Finances', 'Transfer Credit', 'Personal Information', 'Petitions', 'Graduation', 'Exam Identification', 'Absence Declaration'))
+        self.edit_topic.grid(row=6, column=0, sticky=tk.W, padx=10, pady=5)
+
+        self.edit_question = ScrolledTextWidget(self.frame3, label='Summary of Question', error_message='')
+        self.edit_question.grid(row=7, column=0, sticky=tk.W, padx=10, pady=5)
+
+        self.submit_button = tk.Button(self.frame3, text='Save Changes', width=8, height=2)
+        self.submit_button.grid(row=8, column=0, padx=5, pady=30)
+
+        self.cancel_button = tk.Button(self.frame3, text='Cancel', width=4, height=2, command=self.cancel_edit)
+        self.cancel_button.grid(row=8, column=1, padx=5, pady=30)
+
+
+        # Create frame2 widgets
+        # self.see_directory_button = tk.Button(self.frame2, text='See Directory', command=self.go_to_directory)
+        # self.see_directory_button.grid(row=0, column=0, padx=10, pady=10)
+
+        # self.see_submission_button = tk.Button(self.frame2, text='See Submission', command=self.go_to_profile)
+        # self.see_submission_button.grid(row=0, column=1, padx=10, pady=10)
 
         self.directory_frame = tk.Frame(self.frame2, bg='yellow', width=850, height=600)
         self.directory_frame.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW, padx=10, pady=10)
 
-        self.profile_frame = tk.Frame(self.frame2, bg='green', width=850, height=600)
-        self.profile_frame.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW, padx=10, pady=10)
+        # self.profile_frame = tk.Frame(self.frame2, bg='green', width=850, height=600)
+        # self.profile_frame.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW, padx=10, pady=10)
 
-        self.edit_button = tk.Button(self.frame2, text='Edit', command=self.make_new_window)
-        self.edit_button.grid(row=2, column=0, columnspan=2, pady=20)
+        self.edit_button = tk.Button(self.frame2, text='Edit', width=8, height=2, command=self.confirm_edit_record)
+        self.edit_button.grid(row=2, column=0, pady=20)
+
+        self.delete_button = tk.Button(self.frame2, text='Delete', width=8, height=2, command=self.confirm_delete_record)
+        self.delete_button.grid(row=2, column=1, pady=20)
         
         self.grid_rowconfigure(0, weight=1)  # This makes lower edge of frames touch the bottom of the screen
          
     
     def validate_only_text(self, text):
         # Check if input text is valid
-        name_valid = all(char.isalpha() or char.isspace() for char in text) # I used ChatGPT to learn about the all() function
+        name_valid = len(text) <= 1000 and all(char.isalpha() or char.isspace() for char in text) # I used ChatGPT to learn about the all() function
         
         if name_valid:
             # Clear error message
             self.name_field.error.configure(text='')
+            self.edit_name_field.error.configure(text='')
         else:
             # Display error message
             self.name_field.error.configure(text='Please only enter letters or spaces')
+            self.edit_name_field.error.configure(text='Please only enter letters or spaces')
         
         return name_valid
 
@@ -145,9 +189,10 @@ class StarterBrowsePage(tk.Frame):
     def validate_name(self, event):
         if all(char.isalpha() or char.isspace() for char in event.widget.get()): # I used ChatGPT to learn about the event.widget.get() method
             self.name_field.error.configure(text='')
+            self.edit_name_field.error.configure(text='')
         else:
             self.name_field.error.configure(text='Please only enter letters or spaces')
-
+            self.edit_name_field.error.configure(text='Please only enter letters or spaces')
 
     def validate_only_numbers(self, text):
         # Check if input text is valid
@@ -156,51 +201,67 @@ class StarterBrowsePage(tk.Frame):
         if id_valid:
             # Clear error message
             self.id_field.error.configure(text='')
+            self.edit_id_field.error.configure(text='')
         else:
             # Display error message
             self.id_field.error.configure(text='Please enter the ten digits only composed of numbers')
+            self.edit_id_field.error.configure(text='Please enter the ten digits only composed of numbers')
         
         return id_valid
-
 
     def validate_ten_digits(self, event):
         if len(event.widget.get()) != 10:
             self.id_field.error.configure(text='The Student ID must be 10 digits long')
+            self.edit_id_field.error.configure(text='The Student ID must be 10 digits long')
         elif len(event.widget.get()) == 10:
             self.id_field.error.configure(text='')
+            self.edit_id_field.error.configure(text='')
 
+    # def go_to_directory(self):
+        # self.directory_frame.lift()
 
-    def validate_question(self, text):
-        # Check if input text is valid
-        question_valid = len(text) <= 50 and all(char.isalpha() or char.isspace() or char.isdigit() or char==',' or char=='.' for char in text)
+    # def go_to_profile(self):
+        # self.profile_frame.lift()
+
+    def go_to_edit(self):
+        #TO DO: populate widgets with data in the selected record
+        self.name_field.error.configure(text='')
+        self.edit_name_field.error.configure(text='')
+        self.id_field.error.configure(text='')
+        self.edit_id_field.error.configure(text='')
+        self.question.error.configure(text='')
+        self.edit_question.error.configure(text='')
+        self.name_field.reset()
+        self.id_field.reset()
+        self.question.reset()
+        self.frame3.lift()
+
+    def back_to_submit(self):
+        self.name_field.error.configure(text='')
+        self.edit_name_field.error.configure(text='')
+        self.id_field.error.configure(text='')
+        self.edit_id_field.error.configure(text='')
+        self.question.error.configure(text='')
+        self.edit_question.error.configure(text='')
+        self.frame1.lift()
         
-        if question_valid:
-            # Clear error message
-            self.question.error.configure(text='')
-        else:
-            # Display error message
-            self.question.error.configure(text='Please do not enter special characters and limit the summary to 50 characters')
-        
-        return question_valid
 
-    def validate_fifty_chars(self, event):
-        if len(event.widget.get()) > 50:
-            self.question.error.configure(text='Please limit the summary to 50 characters')
-        elif len(event.widget.get()) <= 50:
-            self.question.error.configure(text='')
+    def confirm_delete_record(self):
+        confirm_delete = messagebox.askokcancel("Delete", "Are you sure you want to delete this record?")
+        if confirm_delete:
+            #TO DO: add code to delete record
+            pass
 
+    def confirm_edit_record(self):
+        confirm_edit = messagebox.askokcancel("Edit", "Are you sure you want to edit this record? Any data yet to be submitted or saved will be lost.")
+        if confirm_edit:
+            self.go_to_edit()
 
-    def make_new_window(parent):
-        new_window = tk.Toplevel(parent)
-        new_window.geometry("600x600")
+    def cancel_edit(self):
+        confirm_cancel = messagebox.askokcancel("Cancel", "Are you sure you want to cancel your edit? Any unsaved data will be lost.")
+        if confirm_cancel:
+            self.back_to_submit()
 
-
-    def go_to_directory(self):
-        self.directory_frame.lift()
-
-
-    def go_to_profile(self):
-        self.profile_frame.lift()
 
 
 class TestPage(tk.Frame):
