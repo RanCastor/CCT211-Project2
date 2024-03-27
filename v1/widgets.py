@@ -154,7 +154,7 @@ class ScrolledTextWidget(tk.Frame):
         elif len(text) <= 50:
             self.error.configure(text='')
 
-    # I used ChatGPT to obtain the code from lines 160 to 166 and 175 because it's not possible to use validatecommand for scrolledtext widgets like for entries,
+    # I used ChatGPT to obtain the code for most of the validate_question method because it's not possible to use validatecommand for scrolledtext widgets like for entries,
     # so I didn't know how to restrain the user from inputing over 50 chars
     def validate_question(self, event):
         # Allow certain control keys without validation
