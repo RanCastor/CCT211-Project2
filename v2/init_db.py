@@ -27,7 +27,7 @@ def create_database():
     # Manually inserting data
     cur.executescript("""
     INSERT INTO tickets (ticket_id, name, student_id, date, program, study_year, accessibility, category, summary)
-     VALUES (1, 'Rudolf Adler', '1004567890', '2005-2-10', 'Communication', '2', 'No', 'Finances', 'Something happened');
+     VALUES (1, 'Rudolf Adler', '1004567890', '02/10/05', 'Communication', '2', 'No', 'Finances', 'Something happened');
     """)
 
 
