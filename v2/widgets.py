@@ -15,7 +15,7 @@ class EntryField(tk.Frame):
         self.title = tk.Label(self, text=label, width=20)
         self.title.grid(row=0, column=0, padx=10, sticky=(tk.W + tk.E))
 
-        self.error = tk.Label(self, text=error_message, width=10)
+        self.error = tk.Label(self, text=error_message, width=10, fg='red')
         self.error.grid(row=1, column=0, columnspan=2, sticky=(tk.W + tk.E))
         
         # Register the validation command with the widget's interpreter
@@ -46,10 +46,11 @@ class EntryField(tk.Frame):
 
 
 class Combo(tk.Frame):
-    def __init__(self, parent, label='', options=('sasdf'), *args, **kwargs):
+    def __init__(self, parent, label='', error_message='', options=('sasdf'), *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.dataentry = tk.StringVar()
         self.label = label
+        self.error_message = error_message
 
         self.title = tk.Label(self, text=label, width=20)
         self.title.grid(row=0, column=0, padx=10, sticky=(tk.W + tk.E))
@@ -57,6 +58,9 @@ class Combo(tk.Frame):
         self.combo['values'] = options
         self.combo.grid(row=0, column=1, padx=15, pady=15, sticky=(tk.W + tk.E))
         self.combo.current()
+
+        self.error = tk.Label(self, text=error_message, width=10, fg='red')
+        self.error.grid(row=1, column=0, columnspan=2, sticky=(tk.W + tk.E))
 
     def reset(self):
         self.dataentry.set("")
@@ -66,12 +70,16 @@ class Combo(tk.Frame):
 
 
 class RadiobuttonField(tk.Frame):
-    def __init__(self, parent, label='', options=[], initial_value=None, *args, **kwargs):
+    def __init__(self, parent, label='', error_message='', options=[], initial_value=None, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
         self.choice = tk.StringVar(value=initial_value)
+        self.error_message = error_message
 
         self.label = tk.Label(self, text=label, width=20)
         self.label.grid(row=0, column=0, padx=10, pady=15, sticky=(tk.W + tk.E))
+
+        self.error = tk.Label(self, text=error_message, fg='red')
+        self.error.grid(row=5, column=1, columnspan=5, sticky=(tk.W + tk.E))
 
         self.option_buttons = []
         for index, option in enumerate(options):
@@ -100,7 +108,7 @@ class ScrolledTextWidget(tk.Frame):
         self.label = tk.Label(self, text=label, width=20)
         self.label.grid(row=0, column=0, padx=10, sticky=tk.W)
 
-        self.error = tk.Label(self, text=error_message, width=10)
+        self.error = tk.Label(self, text=error_message, width=10, fg='red')
         self.error.grid(row=1, column=0, columnspan=2, sticky=(tk.W + tk.E))
 
         self.scrolled_text = scrolledtext.ScrolledText(self, width=45, height=5, font=self.custom_font)
@@ -149,9 +157,11 @@ class ScrolledTextWidget(tk.Frame):
     
     def validate_fifty_chars(self, event):
         text = self.get()
-        if len(text) > 50:
+        if text and len(text) > 50:
             self.error.configure(text='Please limit the summary to 50 characters')
-        elif len(text) <= 50:
+        elif not text:
+            self.error.configure(text='Please enter a summary of the question. This field is mandatory.')
+        else:
             self.error.configure(text='')
 
     # I used ChatGPT to obtain the code for most of the validate_question method because it's not possible to use validatecommand for scrolledtext widgets like for entries,
