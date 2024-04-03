@@ -5,7 +5,7 @@ from tkinter import messagebox
 from widgets import EntryField, Combo, RadiobuttonField, ScrolledTextWidget, CalendarField
 import tkinter.ttk as ttk  # just for treeview
 # import entry_field  # no particular good reason I did it the other way here
-# from models import *  # done this way to access classes just by name
+from models import *  # done this way to access classes just by name
 import sys  # only used for flushing debug print statements
 
 
@@ -15,7 +15,7 @@ class App(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
         # this is the main database access object
         # note you must run the init_db.py script before using SQLStorage
-        # self.data = SQLStorage()
+        self.data = SQLStorage()
 
         # set a single font to be used throughout the app
         self.title_font = tkfont.Font(
@@ -35,7 +35,7 @@ class App(tk.Tk):
         for F in (StarterBrowsePage, TestPage):
             page_name = F.__name__
             # last arg - send the object that accesses the db
-            frame = F(parent=container, controller=self)
+            frame = F(parent=container, controller=self, persist=self.data)
             self.frames[page_name] = frame
 
             # put all of the pages in the same location;
@@ -85,6 +85,9 @@ class StarterBrowsePage(tk.Frame):
         self.frame1.grid(row=0, column=0, sticky=tk.NSEW)
 
         # Create frame1 widgets
+        self.persist = persist  # Treeview related value
+        self.data = {}  # Treeview related value
+        # Change the fields with related self.data['#'] etc
         self.name_field = EntryField(self.frame1, label='Name', error_message='', validate='key', validatecommand=self.validate_only_text)
         self.name_field.grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
         self.name_field.field.bind("<FocusOut>", self.validate_name)
@@ -157,6 +160,47 @@ class StarterBrowsePage(tk.Frame):
 
         self.directory_frame = tk.Frame(self.frame2, bg='yellow', width=850, height=600)
         self.directory_frame.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW, padx=10, pady=10)
+        # TREE ALPHA VERSION START
+        scrollbarx = tk.Scrollbar(self.directory_frame, orient=tk.HORIZONTAL)
+        scrollbary = tk.Scrollbar(self.directory_frame, orient=tk.VERTICAL)
+        self.tree = ttk.Treeview(self.directory_frame, columns=("ticket_id", "name", "student_id", "date", 'program', 'study_year', 'accessibility', 'category', 'summary'),
+                                 selectmode="extended", yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
+        scrollbary.config(command=self.tree.yview)
+        scrollbary.pack(side=tk.RIGHT, fill=tk.Y)
+        scrollbarx.config(command=self.tree.xview)
+        scrollbarx.pack(side=tk.BOTTOM, fill=tk.X)
+        self.tree.heading('ticket_id', text="Ticket ID", anchor=tk.W)
+        self.tree.heading('name', text="Name", anchor=tk.W)
+        self.tree.heading('student_id', text="Student ID", anchor=tk.W)
+        self.tree.heading('date', text="Date", anchor=tk.W)
+        self.tree.heading('program', text="Program", anchor=tk.W)
+        self.tree.heading('study_year', text="Study Year", anchor=tk.W)
+        self.tree.heading('accessibility', text="Accessibility", anchor=tk.W)
+        self.tree.heading('category', text="Category", anchor=tk.W)
+        self.tree.heading('summary', text="Summary", anchor=tk.W)
+        self.tree.column('#0', stretch=tk.NO, minwidth=0, width=0)
+        self.tree.column('#1', stretch=tk.NO, minwidth=0, width=94)
+        self.tree.column('#2', stretch=tk.NO, minwidth=0, width=94)
+        self.tree.column('#3', stretch=tk.NO, minwidth=0, width=94)
+        self.tree.column('#4', stretch=tk.NO, minwidth=0, width=94)
+        self.tree.column('#5', stretch=tk.NO, minwidth=0, width=94)
+        self.tree.column('#6', stretch=tk.NO, minwidth=0, width=94)
+        self.tree.column('#7', stretch=tk.NO, minwidth=0, width=94)
+        self.tree.column('#8', stretch=tk.NO, minwidth=0, width=94)
+        self.tree.column('#9', stretch=tk.NO, minwidth=0, width=94)
+        # self.tree.bind('<<TreeviewSelect>>', self.on_select)
+        self.tree.pack()
+        self.selected = []
+
+        # this object is the data persistence model
+        self.persist = persist
+        all_records = self.persist.get_all_sorted_records()
+        # grab all records from db and add them to the treeview widget
+        for record in all_records:
+            self.tree.insert("", 0, values=(
+                record.rid, record.name, record.student_id, record.date, record.program, record.study_year,
+                record.accessibility, record.category, record.summary))
+        # TREE ALPHA VERSION END
 
         # self.profile_frame = tk.Frame(self.frame2, bg='green', width=850, height=600)
         # self.profile_frame.grid(row=1, column=0, columnspan=2, sticky=tk.NSEW, padx=10, pady=10)
@@ -168,8 +212,37 @@ class StarterBrowsePage(tk.Frame):
         self.delete_button.grid(row=2, column=1, pady=20)
         
         self.grid_rowconfigure(0, weight=1)  # This makes lower edge of frames touch the bottom of the screen
-         
-    
+
+    # Methods for Treeview Start
+    def on_select(self, event):
+        ''' add the currently highlighted items to a list
+        '''
+        self.selected = event.widget.selection()
+
+    def reset(self):  # LOOK TO THIS METHOD AND ADD NECESSARY VARIABLES TO YOUR BROWSE PAGE
+        ''' on every new entry, blank out the fields
+        '''
+        for key in self.data:
+            self.data[key].reset()
+
+    def update(self):
+        self.reset()
+
+    def submit(self):  # LOOK TO THIS METHOD AND ADD NECESSARY VARIABLES TO YOUR BROWSE PAGE
+        ''' make a new ticket based on the form
+        '''
+        t = Ticket(name=self.data['Name'].get(),
+                   student_id=self.data['Student_ID'].get(),
+                   date=self.data['Date'].get(),
+                   program=self.data['Program'].get(),
+                   study_year=self.data['Study_Year'].get(),
+                   accessibility=self.data['Accessibility'].get(),
+                   category=self.data['Category'].get(),
+                   summary=self.data['Summary'].get())
+        self.persist.save_record(t)
+        self.update()
+    # Methods for Treeview End
+
     def validate_only_text(self, text):
         # Check if input text is valid
         name_valid = len(text) <= 1000 and all(char.isalpha() or char.isspace() for char in text) # I used ChatGPT to learn about the all() function
