@@ -18,6 +18,8 @@ class App(tk.Tk):
         # note you must run the init_db.py script before using SQLStorage
         self.data = SQLStorage()
 
+        self.resizable(False, False)
+
         # set a single font to be used throughout the app
         self.title_font = tkfont.Font(
             family='Helvetica', size=18, weight="bold", slant="italic")
@@ -88,12 +90,14 @@ class StarterBrowsePage(tk.Frame):
         # Create frame1 widgets
         self.persist = persist  # Treeview related value
         self.data = {}  # Treeview related value
-        self.data['Name'] = EntryField(self.frame1, label='Name', error_message='', validate='key', validatecommand=self.validate_only_text)
+        self.data['Name'] = EntryField(self.frame1, label='Name', error_message='', validate='key',
+                                       validatecommand=self.validate_only_text)
         self.data['Name'].grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
         self.data['Name'].field.bind("<FocusOut>", self.validate_name)
         # self.name_field.field.bind("<FocusOut>", self.validate_name)
 
-        self.data['Student_ID'] = EntryField(self.frame1, label='Student ID', error_message='', validate='key', validatecommand=self.validate_only_numbers)
+        self.data['Student_ID'] = EntryField(self.frame1, label='Student ID', error_message='', validate='key',
+                                             validatecommand=self.validate_only_numbers)
         self.data['Student_ID'].grid(row=1, column=0, sticky=tk.W, padx=10, pady=5)
         self.data['Student_ID'].field.bind("<FocusOut>", self.validate_ten_digits)
         # self.id_field.field.bind("<FocusOut>", self.validate_ten_digits)
@@ -102,19 +106,27 @@ class StarterBrowsePage(tk.Frame):
         self.data['Date'].grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
         # self.cal.grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.data['Program'] = Combo(self.frame1, label='Program', options=('Anthropology', 'Art', 'Biology', 'Communication', 'Business'))
+        self.data['Program'] = Combo(self.frame1, label='Program', options=('Anthropology', 'Art', 'Biology',
+                                                                            'Communication', 'Business'))
         self.data['Program'].grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
         # self.program.grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.data['Study_Year'] = RadiobuttonField(self.frame1, label='Year of Study', options=['1', '2', '3', '4', '4+'], initial_value='1')
+        self.data['Study_Year'] = RadiobuttonField(self.frame1, label='Year of Study', options=['1', '2', '3',
+                                                                                                '4', '4+'], initial_value='1')
         self.data['Study_Year'].grid(row=4, column=0, sticky=tk.W, padx=10, pady=5)
         # self.year_of_study.grid(row=4, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.data['Accessibility'] = RadiobuttonField(self.frame1, label='Registered with Accessibility?', options=['Yes', 'No'], initial_value='No')
+        self.data['Accessibility'] = RadiobuttonField(self.frame1, label='Registered with Accessibility?',
+                                                      options=['Yes', 'No'], initial_value='No')
         self.data['Accessibility'].grid(row=5, column=0, sticky=tk.W, padx=10, pady=5)
         # self.accessibility.grid(row=5, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.data['Category'] = Combo(self.frame1, label='Category of Topic', options=('Registration', 'Finances', 'Transfer Credit', 'Personal Information', 'Petitions', 'Graduation', 'Exam Identification', 'Absence Declaration'))
+        self.data['Category'] = Combo(self.frame1, label='Category of Topic', options=('Registration',
+                                                                                       'Finances', 'Transfer Credit',
+                                                                                       'Personal Information',
+                                                                                       'Petitions', 'Graduation',
+                                                                                       'Exam Identification',
+                                                                                       'Absence Declaration'))
         self.data['Category'].grid(row=6, column=0, sticky=tk.W, padx=10, pady=5)
         # self.topic.grid(row=6, column=0, sticky=tk.W, padx=10, pady=5)
 
@@ -127,12 +139,14 @@ class StarterBrowsePage(tk.Frame):
 
         # Create frame3 widgets
         self.edit_data = {}
-        self.edit_data['Name'] = EntryField(self.frame3, label='Name', error_message='', validate='key', validatecommand=self.validate_only_text)
+        self.edit_data['Name'] = EntryField(self.frame3, label='Name', error_message='', validate='key',
+                                            validatecommand=self.validate_only_text)
         self.edit_data['Name'].grid(row=0, column=0, sticky=tk.W, padx=10, pady=5)
         self.edit_data['Name'].field.bind("<FocusOut>", self.validate_name)
         # self.edit_name_field.field.bind("<FocusOut>", self.validate_name)
 
-        self.edit_data['Student_ID'] = EntryField(self.frame3, label='Student ID', error_message='', validate='key', validatecommand=self.validate_only_numbers)
+        self.edit_data['Student_ID'] = EntryField(self.frame3, label='Student ID', error_message='', validate='key',
+                                                  validatecommand=self.validate_only_numbers)
         self.edit_data['Student_ID'].grid(row=1, column=0, sticky=tk.W, padx=10, pady=5)
         self.edit_data['Student_ID'].field.bind("<FocusOut>", self.validate_ten_digits)
         # self.edit_id_field.field.bind("<FocusOut>", self.validate_ten_digits)
@@ -141,19 +155,27 @@ class StarterBrowsePage(tk.Frame):
         self.edit_data['Date'].grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
         # self.edit_cal.grid(row=2, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.edit_data['Program'] = Combo(self.frame3, label='Program', options=('Anthropology', 'Art', 'Biology', 'Communication', 'Business'))
+        self.edit_data['Program'] = Combo(self.frame3, label='Program', options=('Anthropology', 'Art', 'Biology',
+                                                                                 'Communication', 'Business'))
         self.edit_data['Program'].grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
         # self.edit_program.grid(row=3, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.edit_data['Study_Year'] = RadiobuttonField(self.frame3, label='Year of Study', options=['1', '2', '3', '4', '4+'], initial_value='1')
+        self.edit_data['Study_Year'] = RadiobuttonField(self.frame3, label='Year of Study',
+                                                        options=['1', '2', '3', '4', '4+'], initial_value='1')
         self.edit_data['Study_Year'].grid(row=4, column=0, sticky=tk.W, padx=10, pady=5)
         # self.edit_year_of_study.grid(row=4, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.edit_data['Accessibility'] = RadiobuttonField(self.frame3, label='Registered with Accessibility?', options=['Yes', 'No'], initial_value='No')
+        self.edit_data['Accessibility'] = RadiobuttonField(self.frame3, label='Registered with Accessibility?',
+                                                           options=['Yes', 'No'], initial_value='No')
         self.edit_data['Accessibility'].grid(row=5, column=0, sticky=tk.W, padx=10, pady=5)
         # self.edit_accessibility.grid(row=5, column=0, sticky=tk.W, padx=10, pady=5)
 
-        self.edit_data['Category'] = Combo(self.frame3, label='Category of Topic', options=('Registration', 'Finances', 'Transfer Credit', 'Personal Information', 'Petitions', 'Graduation', 'Exam Identification', 'Absence Declaration'))
+        self.edit_data['Category'] = Combo(self.frame3, label='Category of Topic', options=('Registration',
+                                                                                            'Finances', 'Transfer Credit',
+                                                                                            'Personal Information',
+                                                                                            'Petitions', 'Graduation',
+                                                                                            'Exam Identification',
+                                                                                            'Absence Declaration'))
         self.edit_data['Category'].grid(row=6, column=0, sticky=tk.W, padx=10, pady=5)
         # self.edit_topic.grid(row=6, column=0, sticky=tk.W, padx=10, pady=5)
 
@@ -180,7 +202,8 @@ class StarterBrowsePage(tk.Frame):
         # TREE ALPHA VERSION START
         scrollbarx = tk.Scrollbar(self.directory_frame, orient=tk.HORIZONTAL)
         scrollbary = tk.Scrollbar(self.directory_frame, orient=tk.VERTICAL)
-        self.tree = ttk.Treeview(self.directory_frame, columns=("ticket_id", "name", "student_id", "date", 'program', 'study_year', 'accessibility', 'category', 'summary'),
+        self.tree = ttk.Treeview(self.directory_frame, columns=("ticket_id", "name", "date", 'program',
+                                                                'study_year', 'category'),
                                  selectmode="extended", yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
         scrollbary.config(command=self.tree.yview)
         scrollbary.pack(side=tk.RIGHT, fill=tk.Y)
@@ -188,23 +211,17 @@ class StarterBrowsePage(tk.Frame):
         scrollbarx.pack(side=tk.BOTTOM, fill=tk.X)
         self.tree.heading('ticket_id', text="Ticket ID", anchor=tk.W)
         self.tree.heading('name', text="Name", anchor=tk.W)
-        self.tree.heading('student_id', text="Student ID", anchor=tk.W)
         self.tree.heading('date', text="Date", anchor=tk.W)
         self.tree.heading('program', text="Program", anchor=tk.W)
         self.tree.heading('study_year', text="Study Year", anchor=tk.W)
-        self.tree.heading('accessibility', text="Accessibility", anchor=tk.W)
         self.tree.heading('category', text="Category", anchor=tk.W)
-        self.tree.heading('summary', text="Summary", anchor=tk.W)
         self.tree.column('#0', stretch=tk.NO, minwidth=0, width=0)
-        self.tree.column('#1', stretch=tk.NO, minwidth=0, width=94)
-        self.tree.column('#2', stretch=tk.NO, minwidth=0, width=94)
-        self.tree.column('#3', stretch=tk.NO, minwidth=0, width=94)
-        self.tree.column('#4', stretch=tk.NO, minwidth=0, width=94)
-        self.tree.column('#5', stretch=tk.NO, minwidth=0, width=94)
-        self.tree.column('#6', stretch=tk.NO, minwidth=0, width=94)
-        self.tree.column('#7', stretch=tk.NO, minwidth=0, width=94)
-        self.tree.column('#8', stretch=tk.NO, minwidth=0, width=94)
-        self.tree.column('#9', stretch=tk.NO, minwidth=0, width=94)
+        self.tree.column('#1', stretch=tk.NO, minwidth=50, width=90)
+        self.tree.column('#2', stretch=tk.NO, minwidth=50, width=90)
+        self.tree.column('#3', stretch=tk.NO, minwidth=50, width=90)
+        self.tree.column('#4', stretch=tk.NO, minwidth=50, width=90)
+        self.tree.column('#5', stretch=tk.NO, minwidth=50, width=90)
+        self.tree.column('#6', stretch=tk.NO, minwidth=50, width=94)
         self.tree.bind('<<TreeviewSelect>>', self.on_select)
         self.tree.pack()
         self.selected = []
@@ -215,8 +232,7 @@ class StarterBrowsePage(tk.Frame):
         # grab all records from db and add them to the treeview widget
         for record in all_records:
             self.tree.insert("", 0, values=(
-                record.rid, record.name, record.student_id, record.date, record.program, record.study_year,
-                record.accessibility, record.category, record.summary))
+                record.rid, record.name, record.date, record.program, record.study_year, record.category, record.summary))
         # TREE ALPHA VERSION END
 
         # self.profile_frame = tk.Frame(self.frame2, bg='green', width=850, height=600)
@@ -238,15 +254,18 @@ class StarterBrowsePage(tk.Frame):
 
     def delete_selected(self):
         ''' uses the selected list to remove and delete certain records'''
-        confirm_delete = messagebox.askokcancel("Delete", "Are you sure you want to delete this record?")
-        if confirm_delete:
-            for idx in self.selected:
-                print(self.tree.item(idx)['values'][0])
-                record_id = self.tree.item(idx)['values'][0]
-                # remove from the db
-                self.persist.delete_record(record_id)
-                # remove from the treeview
-                self.tree.delete(idx)
+        if len(self.selected) == 0:
+            messagebox.showerror(title="Delete Error", message="Please select a ticket from Treeview for deleting.")
+        else:
+            confirm_delete = messagebox.askokcancel("Delete", "Are you sure you want to delete this record?")
+            if confirm_delete:
+                for idx in self.selected:
+                    print(self.tree.item(idx)['values'][0])
+                    record_id = self.tree.item(idx)['values'][0]
+                    # remove from the db
+                    self.persist.delete_record(record_id)
+                    # remove from the treeview
+                    self.tree.delete(idx)
 
     def edit_selected(self):
         self.ticket.name = self.edit_data['Name'].get()
@@ -329,6 +348,7 @@ class StarterBrowsePage(tk.Frame):
 
     def validate_only_text(self, text):
         # Check if input text is valid
+        
         name_valid = len(text) <= 1000 and all(char.isalpha() or char.isspace() for char in text) # I used ChatGPT to learn about the all() function
 
         if name_valid:
@@ -389,17 +409,12 @@ class StarterBrowsePage(tk.Frame):
         self.edit_data['Summary'].error.configure(text='')
         self.frame1.lift()
 
-    def confirm_delete_record(self):
-        confirm_delete = messagebox.askokcancel("Delete", "Are you sure you want to delete this record?")
-        if confirm_delete:
-            #TO DO: add code to delete record
-            pass
-
     def confirm_edit_record(self):
         if len(self.selected) == 0:
             messagebox.showerror(title="Select Error", message="Please select a ticket from Treeview for editing.")
         else:
-            confirm_edit = messagebox.askokcancel("Edit", "Are you sure you want to edit this record? Any data yet to be submitted or saved will be lost.")
+            confirm_edit = messagebox.askokcancel("Edit",
+                                                  "Are you sure you want to edit this record? Any data yet to be submitted or saved will be lost.")
             if confirm_edit:
                 self.go_to_edit()
 
