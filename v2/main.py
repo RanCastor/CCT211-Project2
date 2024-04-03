@@ -342,7 +342,7 @@ class StarterBrowsePage(tk.Frame):
         all_records = self.persist.get_all_sorted_records()
         for record in all_records:
             self.tree.insert("", 0, values=(
-                record.rid, record.name, record.student_id, record.date, record.program, record.study_year,
+                record.rid, record.name, record.date, record.program, record.study_year,
                 record.accessibility, record.category, record.summary))
     # Methods for Treeview End
 
