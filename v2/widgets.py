@@ -55,6 +55,7 @@ class Combo(tk.Frame):
         self.title = tk.Label(self, text=label, width=20)
         self.title.grid(row=0, column=0, padx=10, sticky=(tk.W + tk.E))
         self.combo = ttk.Combobox(self, width=15, textvariable=self.dataentry, state="readonly")
+        self.combo.bind("<<ComboboxSelected>>", self.validate_selection)
         self.combo['values'] = options
         self.combo.grid(row=0, column=1, padx=15, pady=15, sticky=(tk.W + tk.E))
         self.combo.current()
@@ -67,6 +68,12 @@ class Combo(tk.Frame):
 
     def get(self):
         return self.dataentry.get()
+    
+    def validate_selection(self, event):
+        if self.dataentry.get():
+            self.error.config(text='')
+        else:
+            self.error.config(text=self.error_message)
 
 
 class RadiobuttonField(tk.Frame):
@@ -84,6 +91,7 @@ class RadiobuttonField(tk.Frame):
         self.option_buttons = []
         for index, option in enumerate(options):
             button = tk.Radiobutton(self, text=option, variable=self.choice, value=option)
+            button.bind("<ButtonRelease-1>", self.validate_selection)
             button.grid(row=0, column=index + 1, padx=5, sticky=(tk.W + tk.E))
             self.option_buttons.append(button)
 
@@ -92,6 +100,12 @@ class RadiobuttonField(tk.Frame):
 
     def get(self):
         return self.choice.get()
+    
+    def validate_selection(self, event):
+        if self.choice.get():
+            self.error.config(text='')
+        else:
+            self.error.config(text=self.error_message)
 
 
 class View_ScrolledTextWidget(tk.Frame):
@@ -180,7 +194,7 @@ class ScrolledTextWidget(tk.Frame):
         text = self.get()
         if text and len(text) > 50:
             self.error.configure(text='Please limit the summary to 50 characters')
-        elif not text:
+        elif text == '':
             self.error.configure(text='Please enter a summary of the question. This field is mandatory.')
         else:
             self.error.configure(text='')
