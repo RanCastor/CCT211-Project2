@@ -94,6 +94,27 @@ class RadiobuttonField(tk.Frame):
         return self.choice.get()
 
 
+class View_ScrolledTextWidget(tk.Frame):
+    def __init__(self, parent, font=None, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        if font is not None:
+            self.custom_font = font
+        else:
+            self.custom_font = ("Arial", 10)  # Default font if not provided
+
+        self.scrolled_text = scrolledtext.ScrolledText(self, width=45, height=7, font=self.custom_font)
+        self.scrolled_text.grid(row=0, column=1, sticky=tk.W)
+
+        self.scrolled_text.config(state=tk.DISABLED)
+
+    def reset(self):
+        self.scrolled_text.delete("1.0", tk.END)
+
+    def get(self):
+        return self.scrolled_text.get("1.0", tk.END).strip()
+
+
 class ScrolledTextWidget(tk.Frame):
     def __init__(self, parent, label='', error_message='', font=None, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)

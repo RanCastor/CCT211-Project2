@@ -3,7 +3,7 @@ from datetime import date
 from tkinter import *
 from tkinter import font as tkfont
 from tkinter import messagebox
-from widgets import EntryField, Combo, RadiobuttonField, ScrolledTextWidget, CalendarField
+from widgets import EntryField, Combo, RadiobuttonField, ScrolledTextWidget, CalendarField, View_ScrolledTextWidget
 import tkinter.ttk as ttk  # just for treeview
 # import entry_field  # no particular good reason I did it the other way here
 from models import *  # done this way to access classes just by name
@@ -248,13 +248,17 @@ class StarterBrowsePage(tk.Frame):
             self.tree.insert("", 0, values=(
                 record.rid, record.name, record.date, record.program, record.study_year, record.category, record.summary))
         # TREE ALPHA VERSION END
+
+        # View Scrolledtext
+        self.view_summary = View_ScrolledTextWidget(self.treeview_frame)
+        self.view_summary.grid(row=1, column=1, sticky=tk.W, padx=0, pady=2)
             
         # Create treeview_frame widgets
         self.edit_button = tk.Button(self.treeview_frame, text='Edit', width=8, height=2, command=self.confirm_edit_record)
-        self.edit_button.grid(row=1, column=0, pady=20)
+        self.edit_button.grid(row=2, column=1, pady=20)
 
         self.delete_button = tk.Button(self.treeview_frame, text='Delete', width=8, height=2, command=self.delete_selected)
-        self.delete_button.grid(row=1, column=1, pady=20)
+        self.delete_button.grid(row=2, column=1, pady=20, sticky=tk.W)
 
         self.grid_rowconfigure(0, weight=1)  # This makes lower edge of frames touch the bottom of the screen
 
@@ -263,6 +267,16 @@ class StarterBrowsePage(tk.Frame):
         ''' add the currently highlighted items to a list
         '''
         self.selected = event.widget.selection()
+        idx = self.selected[0]  # use first selected item if multiple
+        record_id = self.tree.item(idx)['values'][0]
+        self.ticket = self.persist.get_record(record_id)
+        print(self.ticket.summary)
+        self.view_summary.scrolled_text.config(state=tk.NORMAL)
+        self.view_summary.reset()
+        self.view_summary.scrolled_text.insert(tk.END, self.ticket.summary)
+        self.view_summary.scrolled_text.config(state=tk.DISABLED)
+        print(self.view_summary.get())
+        self.treeview_frame.update()
 
     def delete_selected(self):
         ''' uses the selected list to remove and delete certain records'''
