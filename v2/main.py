@@ -3,10 +3,10 @@ from datetime import date
 from tkinter import *
 from tkinter import font as tkfont
 from tkinter import messagebox
-from new_widgets import EntryField, Combo, RadiobuttonField, ScrolledTextWidget, CalendarField
+from widgets import EntryField, Combo, RadiobuttonField, ScrolledTextWidget, CalendarField
 import tkinter.ttk as ttk  # just for treeview
 # import entry_field  # no particular good reason I did it the other way here
-from new_models import *  # done this way to access classes just by name
+from models import *  # done this way to access classes just by name
 import sys  # only used for flushing debug print statements
 
 
