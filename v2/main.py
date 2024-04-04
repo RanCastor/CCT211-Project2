@@ -141,7 +141,7 @@ class StarterBrowsePage(tk.Frame):
         self.data['Accessibility'].grid(row=5, column=0, sticky=tk.W, padx=10, pady=2)
 
 
-        self.data['Category'] = Combo(self.submit_frame, label='Category of Topic', options=('Registration',
+        self.data['Category'] = Combo(self.submit_frame, label='Topic Category', options=('Registration',
                                                                                        'Finances', 'Transfer Credit',
                                                                                        'Personal Information',
                                                                                        'Petitions', 'Graduation',
@@ -181,16 +181,16 @@ class StarterBrowsePage(tk.Frame):
 
 
         self.edit_data['Study_Year'] = RadiobuttonField(self.edit_frame, label='Year of Study',
-                                                        options=['1', '2', '3', '4', '4+'], initial_value='1')
+                                                        options=['1', '2', '3', '4', '4+'])
         self.edit_data['Study_Year'].grid(row=4, column=0, sticky=tk.W, padx=10, pady=2)
         
 
         self.edit_data['Accessibility'] = RadiobuttonField(self.edit_frame, label='Registered with Accessibility?',
-                                                           options=['Yes', 'No'], initial_value='No')
+                                                           options=['Yes', 'No'])
         self.edit_data['Accessibility'].grid(row=5, column=0, sticky=tk.W, padx=10, pady=2)
         
 
-        self.edit_data['Category'] = Combo(self.edit_frame, label='Category of Topic', options=('Registration',
+        self.edit_data['Category'] = Combo(self.edit_frame, label='Topic Category', options=('Registration',
                                                                                             'Finances', 'Transfer Credit',
                                                                                             'Personal Information',
                                                                                             'Petitions', 'Graduation',
@@ -216,7 +216,7 @@ class StarterBrowsePage(tk.Frame):
         # TREE ALPHA VERSION START
         scrollbarx = tk.Scrollbar(self.directory_frame, orient=tk.HORIZONTAL)
         scrollbary = tk.Scrollbar(self.directory_frame, orient=tk.VERTICAL)
-        self.tree = ttk.Treeview(self.directory_frame, columns=("ticket_id", "name", "date", 'program',
+        self.tree = ttk.Treeview(self.directory_frame, columns=("ticket_id", "name", "student_id", "date", 'program',
                                                                 'study_year', 'category'),
                                  selectmode="browse", yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
         scrollbary.config(command=self.tree.yview)
@@ -225,6 +225,7 @@ class StarterBrowsePage(tk.Frame):
         scrollbarx.pack(side=tk.BOTTOM, fill=tk.X)
         self.tree.heading('ticket_id', text="Ticket ID", anchor=tk.W)
         self.tree.heading('name', text="Name", anchor=tk.W)
+        self.tree.heading('student_id', text="Student ID", anchor=tk.W)
         self.tree.heading('date', text="Date", anchor=tk.W)
         self.tree.heading('program', text="Program", anchor=tk.W)
         self.tree.heading('study_year', text="Study Year", anchor=tk.W)
@@ -233,9 +234,10 @@ class StarterBrowsePage(tk.Frame):
         self.tree.column('#1', stretch=tk.NO, minwidth=50, width=90)
         self.tree.column('#2', stretch=tk.NO, minwidth=50, width=90)
         self.tree.column('#3', stretch=tk.NO, minwidth=50, width=90)
-        self.tree.column('#4', stretch=tk.NO, minwidth=50, width=150)
-        self.tree.column('#5', stretch=tk.NO, minwidth=50, width=90)
-        self.tree.column('#6', stretch=tk.NO, minwidth=50, width=150)
+        self.tree.column('#4', stretch=tk.NO, minwidth=50, width=90)
+        self.tree.column('#5', stretch=tk.NO, minwidth=50, width=150)
+        self.tree.column('#6', stretch=tk.NO, minwidth=50, width=90)
+        self.tree.column('#7', stretch=tk.NO, minwidth=50, width=150)
         self.tree.bind('<<TreeviewSelect>>', self.on_select)
         self.tree.pack(fill='both', expand='true')
         self.selected = []
@@ -246,7 +248,7 @@ class StarterBrowsePage(tk.Frame):
         # grab all records from db and add them to the treeview widget
         for record in all_records:
             self.tree.insert("", 0, values=(
-                record.rid, record.name, record.date, record.program, record.study_year, record.category, record.summary))
+                record.rid, record.name, record.student_id, record.date, record.program, record.study_year, record.category, record.summary))
         # TREE ALPHA VERSION END
 
         # View Scrolledtext
@@ -270,12 +272,12 @@ class StarterBrowsePage(tk.Frame):
         idx = self.selected[0]  # use first selected item if multiple
         record_id = self.tree.item(idx)['values'][0]
         self.ticket = self.persist.get_record(record_id)
-        print(self.ticket.summary)
+        # print(self.ticket.summary)
         self.view_summary.scrolled_text.config(state=tk.NORMAL)
         self.view_summary.reset()
         self.view_summary.scrolled_text.insert(tk.END, self.ticket.summary)
         self.view_summary.scrolled_text.config(state=tk.DISABLED)
-        print(self.view_summary.get())
+        # print(self.view_summary.get())
         self.treeview_frame.update()
 
     def delete_selected(self):
@@ -292,10 +294,13 @@ class StarterBrowsePage(tk.Frame):
                     self.persist.delete_record(record_id)
                     # remove from the treeview
                     self.tree.delete(idx)
+                self.view_summary.scrolled_text.config(state=tk.NORMAL)
+                self.view_summary.scrolled_text.delete("1.0", tk.END)
+                self.view_summary.scrolled_text.config(state=tk.DISABLED)
 
     def edit_selected(self):
 
-        # Initialize a flag to True. It will be set to False if any validation fails.
+        # This allows us to save whether we can submit or not. It will be set to false if not all fields are complete.
         can_submit = True
 
         # Reset error messages for each field before validation
@@ -304,7 +309,7 @@ class StarterBrowsePage(tk.Frame):
             if hasattr(field, 'error'):
                 field.error.configure(text='')
 
-         # Validate each field and set the flag to False if validation fails
+        # Validate each field and set can_submit to False if validation fails
         if self.edit_data['Name'].get() == '':
             self.edit_data['Name'].error.configure(text='Please enter a name. This field is mandatory.')
             can_submit = False
@@ -315,19 +320,19 @@ class StarterBrowsePage(tk.Frame):
             self.edit_data['Summary'].error.configure(text='Please enter a summary of the question. This field is mandatory.')
             can_submit = False
         if self.edit_data['Program'].get() == '':
-            self.edit_data['Program'].error.configure(text='Please enter a program. This field is mandatory.')
+            self.edit_data['Program'].error.configure(text='Please select a program. This field is mandatory.')
             can_submit = False
         if self.edit_data['Study_Year'].get() == '':
-            self.edit_data['Study_Year'].error.configure(text='Please enter a year of study. This field is mandatory.')
+            self.edit_data['Study_Year'].error.configure(text='Please select a year of study. This field is mandatory.')
             can_submit = False
         if self.edit_data['Accessibility'].get() == '':
             self.edit_data['Accessibility'].error.configure(text='Please confirm whether the student is registered with accessibility. This field is mandatory.')
             can_submit = False
         if self.edit_data['Category'].get() == '':
-            self.edit_data['Category'].error.configure(text='Please enter the topic category. This field is mandatory.')
+            self.edit_data['Category'].error.configure(text='Please select the topic category. This field is mandatory.')
             can_submit = False
 
-        # Only proceed with submission if all validations passed
+        # Only submit if all validations passed
         if can_submit:
             self.ticket.name = self.edit_data['Name'].get()
             self.ticket.student_id = self.edit_data['Student_ID'].get()
@@ -339,6 +344,9 @@ class StarterBrowsePage(tk.Frame):
             self.ticket.summary = self.edit_data['Summary'].get()
             self.persist.save_record(self.ticket)
             self.update_treeview()
+            self.view_summary.scrolled_text.config(state=tk.NORMAL)
+            self.view_summary.scrolled_text.delete("1.0", tk.END)
+            self.view_summary.scrolled_text.config(state=tk.DISABLED)
 
     def go_to_edit(self):
         self.edit_data['Name'].error.configure(text='')
@@ -385,7 +393,7 @@ class StarterBrowsePage(tk.Frame):
         ''' make a new ticket based on the form
         '''
         
-        # Initialize a flag to True. It will be set to False if any validation fails.
+        # This allows us to save whether we can submit or not. It will be set to false if not all fields are complete.
         can_submit = True
 
         # Reset error messages for each field before validation
@@ -393,30 +401,30 @@ class StarterBrowsePage(tk.Frame):
             if hasattr(field, 'error'):
                 field.error.configure(text='')
 
-        # Validate each field and set the flag to False if validation fails
+        # Validate each field and set can_submit to False if validation fails
         if self.data['Name'].get() == '':
             self.data['Name'].error.configure(text='Please enter a name. This field is mandatory.')
             can_submit = False
-        if self.data['Student_ID'].get() == '':
-            self.data['Student_ID'].error.configure(text='Please enter a student ID. This field is mandatory.')
+        if self.data['Student_ID'].get() == '' or len(self.data['Student_ID'].get()) < 10:
+            self.data['Student_ID'].error.configure(text='Please enter a ten digits student ID. This field is mandatory.')
             can_submit = False
         if self.data['Summary'].get() == '':
             self.data['Summary'].error.configure(text='Please enter a summary of the question. This field is mandatory.')
             can_submit = False
         if self.data['Program'].get() == '':
-            self.data['Program'].error.configure(text='Please enter a program. This field is mandatory.')
+            self.data['Program'].error.configure(text='Please select a program. This field is mandatory.')
             can_submit = False
         if self.data['Study_Year'].get() == '':
-            self.data['Study_Year'].error.configure(text='Please enter a year of study. This field is mandatory.')
+            self.data['Study_Year'].error.configure(text='Please select a year of study. This field is mandatory.')
             can_submit = False
         if self.data['Accessibility'].get() == '':
             self.data['Accessibility'].error.configure(text='Please confirm whether the student is registered with accessibility. This field is mandatory.')
             can_submit = False
         if self.data['Category'].get() == '':
-            self.data['Category'].error.configure(text='Please enter the topic category. This field is mandatory.')
+            self.data['Category'].error.configure(text='Please select the topic category. This field is mandatory.')
             can_submit = False
 
-        # Only proceed with submission if all validations passed
+        # Only submit if all validations passed
         if can_submit:
             t = Ticket(name=self.data['Name'].get(),
                     student_id=self.data['Student_ID'].get(),
@@ -437,7 +445,7 @@ class StarterBrowsePage(tk.Frame):
         all_records = self.persist.get_all_sorted_records()
         for record in all_records:
             self.tree.insert("", 0, values=(
-                record.rid, record.name, record.date, record.program, record.study_year,
+                record.rid, record.name, record.student_id, record.date, record.program, record.study_year,
                 record.accessibility, record.category, record.summary))
     # Methods for Treeview End
 
@@ -494,6 +502,7 @@ class StarterBrowsePage(tk.Frame):
             self.data['Student_ID'].error.configure(text='')
             self.edit_data['Student_ID'].error.configure(text='')
 
+    
     def back_to_submit(self):
         self.data['Name'].error.configure(text='')
         self.edit_data['Name'].error.configure(text='')
