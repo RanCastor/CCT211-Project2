@@ -21,21 +21,24 @@ As a team, we first decided on Discord as a primary mode of teamwide communicati
 
 In our first meeting, we discussed our ideas and thoughts on the project. We generated a few sketches:
 
-![image](https://github.com/PPendharkar/The-Void/assets/154641312/eea0a455-af27-4e99-be21-a1f66453a1d7)
+![design_and_prototyping_1](https://github.com/RanCastor/CCT211-Project2/assets/154641312/737c75d9-54fb-4957-9597-5a9549b96a77)
+
 
 Working off of these sketches, our blueprint formed via Figma (note: with Dr. Nixon's permission, we have put this screenshot in, which was initially submitted in our proposal):
 
-![image](https://github.com/PPendharkar/The-Void/assets/154641312/f8114ab0-97c6-4b07-9cef-5f71e7c957e1)
+![design_and_prototyping_2](https://github.com/RanCastor/CCT211-Project2/assets/154641312/4a660852-e757-41f2-9e88-4985885aa456)
+
 
 Upon receiving feedback from Dr. Nixon, we were recommended to shift the context of our idea towards a AskRegistrar-like system (University of Toronto, 2018) due to concerns about believability, as we learned that exam attendence requires no more than a student number. We changed our form to accept questions from students instead, categorized under the same topics as AskRegistrar, namely "Registration", "Finances", "[T]ransfer [C]redit", "Personal information", "Petition[s]", "Graduation", "Exam Identification", and "Absence Declaration" (University of Toronto, 2018). 
 
 Our project uses Python's modules tkinter, ttk's treeview, sys, datetime, tkcalendar as well as sqlite3.
 
 (view on Mac)
-![image](https://github.com/PPendharkar/The-Void/assets/154641312/7261221f-28c6-48ef-933f-d0b384af8382)
+![design_and_prototyping_view_on_mac_1](https://github.com/RanCastor/CCT211-Project2/assets/154641312/faaf1fb9-078d-4963-85d4-60da1a7ecdbf)
+
 
 Which evolved further (view on Mac):
-![image](https://github.com/PPendharkar/The-Void/assets/154641312/d832dcbb-b7f2-4bc9-b394-9d3eeb1c6313)
+![design_and_prototyping_view_on_mac_2](https://github.com/RanCastor/CCT211-Project2/assets/154641312/f35237d1-bcd0-435c-b983-30aa2ebcb353)
 
 ### Usability
 Aside from debugging and code organization as mentioned in the requirements, we further investigated what usability actually entails in a software application. We concluded that ease of use and aesthetics are key to a user interface; it must be easy to look, and easy on the eyes. 
@@ -45,7 +48,7 @@ Out of these "15 principles" (Haque, 2023, para 1), we concentrated on __"access
 One way that accessibility was addressed was through ensuring contrast is adequate. One method is to determine contrast ratio of the colors on the interface. Using the WebAim Contrast checker with colors that roughly map to the ones on a Mac PC as well as a Windows PC, respectively. Firstly, for the Mac PC, we were able to identify that one of the two main interface colors: "#ececec" (_Tk differences on Mac OS X_., n.d., para 20). We had to guess the second color at approximately #383838.
 
 Courtesy of WebAim (n.d.), we were able to confirm that our interface passes the contrast check:
-![image](https://github.com/PPendharkar/The-Void/assets/154641312/61477c13-a026-4d30-b88c-976c5f8f18c8)
+![usability_webaim](https://github.com/RanCastor/CCT211-Project2/assets/154641312/90eb9d2c-d7aa-4bbc-924a-fa2ac91d3d5d)
 
 From here, we could also segment the color usages, primarily "[large text]", which is the "active" text on the UI  (Eggbert et al., 2023a, para 2), and "[incidental]" text, which is the text that is "inactive", the latter of which contrast checking does not apply (Eggbert et al., 2023a, para 3). Additionally, we also ensure that our widgets that require text entry are met with input validation (Eggbert et al., 2023b, para 2), and "labels" (Eggbert et al., 2023b, para 3). 
 
@@ -75,15 +78,16 @@ Among our widgets, the use of the textbox underneath the table of student record
 Through the repository, we were able to view how the interface looks and behaves on both Windows and Mac PCs. This way, we could catch errors.
 For example, we addressed the issue with this button's appearance which differed between Mac and Windows (first and second screenshot, respectively):
 
-![image](https://github.com/PPendharkar/The-Void/assets/154641312/216614c3-6215-42f8-b566-6b8336627b41)
+![testing_submit_1](https://github.com/RanCastor/CCT211-Project2/assets/154641312/d25458d5-346a-4ede-be32-6c8d69a22c3c)
 
-![image](https://github.com/PPendharkar/The-Void/assets/154641312/29b4a6f4-94cd-4bd4-9fee-ef50c927aef2)
+![testing_submit_2](https://github.com/RanCastor/CCT211-Project2/assets/154641312/7a885ecf-f957-4672-b7e1-53f50009b0bf)
+
 
 We realized that some buttons may sometimes need to be set wider than what seems fine on Mac PCs, to avoid compromising visibility of interface widgets on Windows.
 
 Additionally, the screen used to be cut off for square-shaped monitors. As such, we opted to limit the categories that could be immediately visible in the directory.
 
-![image](https://github.com/PPendharkar/The-Void/assets/154641312/22e605c8-aacf-4ed6-ab7a-02b3e8235685)
+![testing_3_view_of_interface](https://github.com/RanCastor/CCT211-Project2/assets/154641312/c1f10f24-d93c-4d00-8e2a-6a4d1d20aee1)
 
 Resolving these errors greatly supports cross-platform compatability in our work.
 
