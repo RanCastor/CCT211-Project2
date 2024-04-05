@@ -203,7 +203,7 @@ class StarterBrowsePage(tk.Frame):
         self.edit_data['Summary'].grid(row=7, column=0, sticky=tk.W, padx=10, pady=2)
         
 
-        self.save_button = tk.Button(self.edit_frame, text='Save Changes', width=8, height=2, command=self.edit_selected)
+        self.save_button = tk.Button(self.edit_frame, text='Save Changes', width=16, height=2, command=self.edit_selected)
         self.save_button.grid(row=8, column=0, padx=5, pady=20)
 
         self.cancel_button = tk.Button(self.edit_frame, text='Back', width=8, height=2, command=self.cancel_edit)
@@ -217,7 +217,7 @@ class StarterBrowsePage(tk.Frame):
         scrollbarx = tk.Scrollbar(self.directory_frame, orient=tk.HORIZONTAL)
         scrollbary = tk.Scrollbar(self.directory_frame, orient=tk.VERTICAL)
         self.tree = ttk.Treeview(self.directory_frame, columns=("ticket_id", "name", "student_id", "date", 'program',
-                                                                'study_year', 'category'),
+                                                                'study_year', 'accessibility', 'category'),
                                  selectmode="browse", yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
         scrollbary.config(command=self.tree.yview)
         scrollbary.pack(side=tk.RIGHT, fill=tk.Y)
@@ -229,15 +229,16 @@ class StarterBrowsePage(tk.Frame):
         self.tree.heading('date', text="Date", anchor=tk.W)
         self.tree.heading('program', text="Program", anchor=tk.W)
         self.tree.heading('study_year', text="Study Year", anchor=tk.W)
+        self.tree.heading('accessibility', text="Accessibility", anchor=tk.W)
         self.tree.heading('category', text="Category", anchor=tk.W)
         self.tree.column('#0', stretch=tk.NO, minwidth=0, width=0)
         self.tree.column('#1', stretch=tk.NO, minwidth=50, width=90)
         self.tree.column('#2', stretch=tk.NO, minwidth=50, width=90)
         self.tree.column('#3', stretch=tk.NO, minwidth=50, width=90)
         self.tree.column('#4', stretch=tk.NO, minwidth=50, width=90)
-        self.tree.column('#5', stretch=tk.NO, minwidth=50, width=150)
+        self.tree.column('#5', stretch=tk.NO, minwidth=50, width=130)
         self.tree.column('#6', stretch=tk.NO, minwidth=50, width=90)
-        self.tree.column('#7', stretch=tk.NO, minwidth=50, width=150)
+        self.tree.column('#7', stretch=tk.NO, minwidth=50, width=130)
         self.tree.bind('<<TreeviewSelect>>', self.on_select)
         self.tree.pack(fill='both', expand='true')
         self.selected = []
@@ -248,7 +249,7 @@ class StarterBrowsePage(tk.Frame):
         # grab all records from db and add them to the treeview widget
         for record in all_records:
             self.tree.insert("", 0, values=(
-                record.rid, record.name, record.student_id, record.date, record.program, record.study_year, record.category, record.summary))
+                record.rid, record.name, record.student_id, record.date, record.program, record.study_year, record.accessibility, record.category))
         # TREE ALPHA VERSION END
 
         # View Scrolledtext
