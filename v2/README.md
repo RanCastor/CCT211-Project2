@@ -1,7 +1,10 @@
 # About
 We have developed a graphical user interface (GUI) for recording student information related to academic and financial queries akin to the University of Toronto's AskRegistrar system (University of Toronto, 2018).
 
-# Overview of Strategy
+# How to Use Our Application
+The form on the left can be filled out to record an individual student entry. Before pressing "Submit", please ensure you have also checked off the form sections "Year of Study" and "Accessibility". When the form is filled out and "Submit" has been pressed, you will see a record of the student's information appear in the table in the top right of the screen. When clicking on an entry, the summary of the message will also appear in the text box below. To edit an individual record, please click on the row holding the student record in the table, and then click on the "Edit" button on the bottom right of the screen. A dialog box will appear that prompts you to verify that you would like to edit the entry. If you click "Yes", the form on the left will automatically fill with the information that was submitted in the last instance it was saved into the database. When the desired edits are made, please click on "Save Changes". Your new changes will now appear in the table. 
+
+# Overview of Design Strategy
 The Software Development Life Cycle (SDLC) is a process that advocates for a "framework"-led approach to the management of a team-wide software application, guided by "7 phases" (Swersky, 2022). We apply this strategy in our work to ensure linearity in the pace at which our project evolved from the ideation and discussion stages, to working build in Python.
 
 Requirements entail the expectations of the business for the final product (Swerksy, 2022). In our situation, we were led by the expectations of Professor Michael Nixon as outlined on the CCT211 Quercus shell as well as in lecture. We synthesized these requirements as three separate categories: prioritizing usability and functionality in the planning, design and prototyping stages, testing our product across macOS and Microsoft Windows platforms, and maintaining operations through a central repository system on GitHub.
@@ -65,6 +68,9 @@ For the update aspect, clicking on an individual existing entry displayed in the
 
 For the delete aspect, clicking on an individual existing entry displayed in the ttk treeview and then clicking on the "Delete" button first opens a dialog box prompting the user to select an action: confirm their choice to delete the entry, or cancel the request. If the user chooses to confirm, the entry will be erased from the database and simultaneously, from the treeview.
 
+### Organization Logic
+Among our widgets, the use of the textbox underneath the table of student records to show the corresponding question easily when a record is clicked, as well as a horizontal scrollbar on the table itself to view all of the data entered for each student without making the table excessively wide. In addition, we ensure that all buttons associated directly with actions that transpire in the form are placed on the side of the form/on the left, namely "Submit" for a new entry, as well as "Save Changes" and "Back" during the editing stage for saving edits and canceling edits, respectively. Likewise, all buttons associated with actions that are instantiated via the table are placed underneath the textbox which is under the table on the right, such as "Delete" and "Edit" for deleting a student's record as well as entering the editing stage after clicking on a record.
+
 ## Testing
 Through the repository, we were able to view how the interface looks and behaves on both Windows and Mac PCs. This way, we could catch errors.
 For example, we addressed the issue with this button's appearance which differed between Mac and Windows (first and second screenshot, respectively):
@@ -73,7 +79,7 @@ For example, we addressed the issue with this button's appearance which differed
 
 ![image](https://github.com/PPendharkar/The-Void/assets/154641312/29b4a6f4-94cd-4bd4-9fee-ef50c927aef2)
 
-We realized that widgets may sometimes need to be set wider than what seems fine on Mac PCs, to avoid compromising visibility of interface widgets on Windows.
+We realized that some buttons may sometimes need to be set wider than what seems fine on Mac PCs, to avoid compromising visibility of interface widgets on Windows.
 
 Additionally, the screen used to be cut off for square-shaped monitors. As such, we opted to limit the categories that could be immediately visible in the directory.
 
